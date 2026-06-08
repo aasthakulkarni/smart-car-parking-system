@@ -1,0 +1,62 @@
+#include <Servo.h>
+#include <LiquidCrystal_I2C.h>
+
+Servo gate;
+
+LiquidCrystal_I2C lcd(0x27, 20, 4);
+
+int slot1 = 5;
+int slot2 = 6;
+int slot3 = 7;
+int slot4 = 8;
+
+int entrySensor = 2;
+int exitSensor = 4;
+
+void setup()
+{
+  pinMode(slot1, INPUT);
+  pinMode(slot2, INPUT);
+  pinMode(slot3, INPUT);
+  pinMode(slot4, INPUT);
+
+  pinMode(entrySensor, INPUT);
+  pinMode(exitSensor, INPUT);
+
+  gate.attach(3);
+
+  lcd.init();
+  lcd.backlight();
+
+  gate.write(90);
+}
+
+void loop()
+{
+  int s1 = digitalRead(slot1);
+  int s2 = digitalRead(slot2);
+  int s3 = digitalRead(slot3);
+  int s4 = digitalRead(slot4);
+
+  int available =
+      4 - (s1 + s2 + s3 + s4);
+
+  lcd.setCursor(0,0);
+  lcd.print("Available:");
+  lcd.print(available);
+
+  if(digitalRead(entrySensor) == HIGH
+      && available > 0)
+  {
+      gate.write(0);
+      delay(3000);
+      gate.write(90);
+  }
+
+  if(digitalRead(exitSensor) == HIGH)
+  {
+      gate.write(0);
+      delay(3000);
+      gate.write(90);
+  }
+}
